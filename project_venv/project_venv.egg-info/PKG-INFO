@@ -13,4 +13,5 @@ Requires-Dist: prophet>=1.1.7
 Requires-Dist: pyarrow>=21.0.0
 Requires-Dist: scikit-learn>=1.7.2
 Requires-Dist: scipy>=1.16.2
+Requires-Dist: statsmodels>=0.14.5
 Requires-Dist: yfinance>=0.2.66

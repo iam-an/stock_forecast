@@ -1,8 +1,28 @@
 import polars as pl
-from sklearn.model_selection import train_test_split
+import pandas as pd
+from typing import Tuple
 
-def split_train_test(df):
-    df_for_train = df.select(pl.col("Date", "High"))
-    df_for_train = df.rename({"Date": "ds", "High": "y"})
-    train, test = train_test_split(df_for_train.to_pandas(), test_size=0.2, shuffle=False)
-    return train, test
+def split_train_test(df: pl.DataFrame, test_size: float)->Tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    dfをtrain,testに分割
+
+    Parameters
+    ----------
+    df : pl.DataFrame
+        前処理が終わったdf
+    test_size : float
+        テストの割合
+
+    Returns
+    -------
+    Tuple[pd.DataFrame, pd.DataFrame]
+        train, testに分割されたdf
+    """
+    n = df.height
+    n_test = int(n * test_size)
+    n_train = n - n_test
+
+    train_pd = df.slice(0, n_train).to_pandas()
+    test_pd = df.slice(n_train, n_test).to_pandas()
+
+    return train_pd, test_pd

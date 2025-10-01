@@ -3,6 +3,7 @@ pyproject.toml
 namai/notebook/notebook.py
 namai/src/run.py
 namai/src/core/analysis.py
+namai/src/core/discompose_data.py
 namai/src/core/make_model.py
 namai/src/core/make_plot.py
 namai/src/core/split_data.py
