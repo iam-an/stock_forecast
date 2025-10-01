@@ -1,0 +1,5 @@
+notebook/
+.png
+output/
+__pycache__/
+.egg-info
