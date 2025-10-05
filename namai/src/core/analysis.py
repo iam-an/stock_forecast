@@ -3,9 +3,9 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 def evaluate_score(test, y_pred_test):
     # test データの実測値
-    y_true = test["y"].values
+    y_true = test.values
     # Prophet 予測の中心値 (yhat)
-    y_pred = y_pred_test["yhat"].values
+    y_pred = y_pred_test.values
 
     # 精度指標を計算
     mae = mean_absolute_error(y_true, y_pred)
