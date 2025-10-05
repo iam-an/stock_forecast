@@ -26,3 +26,4 @@ def split_train_test(df: pl.DataFrame, test_size: float)->Tuple[pd.DataFrame, pd
     test_pd = df.slice(n_train, n_test).to_pandas()
 
     return train_pd, test_pd
+

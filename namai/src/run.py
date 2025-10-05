@@ -11,7 +11,6 @@ def main():
     train, test = split_train_test(df=df, test_size=0.2)
     df_train_stl = use_stl(target = "High", df_train=train, period=24)
     y_pred_test, test, train = make_model_prophet(train=df_train_stl, test=test, target="High", date_col="Date")
-    # y_pred_test, test, train = make_model_lstm(train=df_train_stl, test=test, target="High", date_col="Date")
     evaluate_score(test=test["y"], y_pred_test=y_pred_test["yhat"])
     make_plot_time(
         ds_train=train["ds"],
