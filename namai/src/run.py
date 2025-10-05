@@ -4,10 +4,17 @@ from core.make_model import make_model_prophet
 from core.analysis import evaluate_score
 from core.make_plot import make_plot_time
 from core.discompose_data import use_stl
-from utils.constant import OUTPUT
+from utils.constant import OUTPUT, CONFIG
+import json
+
+with open(CONFIG, "r", encoding="utf-8") as f:
+    settings = json.load(f)
+company = settings["COMPANY"]
+start = settings["START_DAY"]
+end = settings["END_DAY"]
 
 def main():
-    df = get_yfinace(company_name="AAPL", start="2025-01-01", end="2025-07-01")
+    df = get_yfinace(company_name=company, start=start, end=end)
     train, test = split_train_test(df=df, test_size=0.2)
     df_train_stl = use_stl(target = "High", df_train=train, period=24)
     y_pred_test, test, train = make_model_prophet(train=df_train_stl, test=test, target="High", date_col="Date")
