@@ -1,5 +1,13 @@
 {
     "COMPANY": "AAPL",
     "START_DAY": "2025-01-01",
-    "END_DAY": "2025-07-01"
+    "END_DAY": "2025-07-01",
+    "STL_TARGET": "High",
+    "PRED_TARGET": "y",
+    "PRED_FEATURE": "ds",
+    "AVERAGE": "yhat",
+    "AVERAGE_UPPER": "yhat_upper",
+    "AVERAGE_LOWER": "yhat_lower",
+    "PERIOD": 24,
+    "OUTPUT_NAME_PNG": "time.png"
 }
