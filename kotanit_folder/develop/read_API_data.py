@@ -5,6 +5,8 @@ import json
 import polars as pl
 import yfinance as yf
 
+
+
 """
 🔹 yfinance の主なモジュール・関数
 yfinance.download(tickers, ...)
@@ -44,6 +46,10 @@ def read_datasets():
 
     df = pl.DataFrame(stock_dataset.history(period=hist_period, interval=hist_inter))
     df = df.drop(f"('Volume', '{company}')", f"('Dividends', '{company}')", f"('Stock Splits', '{company}')")
-    return(df, settings)
+    df = df.rename({f"('Open', '{company}')" : "Open"})
+    df = df.rename({f"('High', '{company}')" : "High"})
+    df = df.rename({f"('Low', '{company}')" : "Low"})
+    df = df.rename({f"('Close', '{company}')" : "Close"})
+    df = df.drop("Open", "Low", "Close")
 
-# %%
+    return(df, settings)
