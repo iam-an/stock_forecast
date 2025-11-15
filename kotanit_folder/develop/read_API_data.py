@@ -5,8 +5,6 @@ import json
 import polars as pl
 import yfinance as yf
 
-
-
 """
 🔹 yfinance の主なモジュール・関数
 yfinance.download(tickers, ...)
@@ -44,12 +42,20 @@ def read_datasets():
     'Stock Splits' → 株式分割（株式分割があった日には分割比率が入る。それ以外は 0）
     """
 
-    df = pl.DataFrame(stock_dataset.history(period=hist_period, interval=hist_inter))
-    df = df.drop(f"('Volume', '{company}')", f"('Dividends', '{company}')", f"('Stock Splits', '{company}')")
+    df = yf.download(company, period=hist_period, interval=hist_inter)
+    df = df.reset_index()
+    df = pl.from_pandas(df)
+    df = df.drop(f"('Volume', '{company}')")
+    df = df.rename({"('Date', '')" : "Date"})
     df = df.rename({f"('Open', '{company}')" : "Open"})
     df = df.rename({f"('High', '{company}')" : "High"})
     df = df.rename({f"('Low', '{company}')" : "Low"})
     df = df.rename({f"('Close', '{company}')" : "Close"})
     df = df.drop("Open", "Low", "Close")
 
-    return(df, settings)
+    min_date = df.select(pl.col("Date").min()).to_series()[0]
+    df = df.with_columns((df["Date"]-min_date).alias("Times"))
+    df = df.with_columns(df["Times"].dt.total_microseconds()/ (24*60*60*1_000_000))
+
+    return df, settings
+
