@@ -1,5 +1,9 @@
 import numpy as np
 from sklearn.metrics import mean_absolute_error, mean_squared_error
+import mlflow
+import mlflow.prophet
+import joblib
+from pathlib import Path
 
 def evaluate_score(test, y_pred_test):
     # test データの実測値
@@ -10,6 +14,14 @@ def evaluate_score(test, y_pred_test):
     # 精度指標を計算
     mae = mean_absolute_error(y_true, y_pred)
     rmse = np.sqrt(mean_squared_error(y_true, y_pred))
+    return mae, rmse
 
-    print(f"MAE: {mae:.3f}")
-    print(f"RMSE: {rmse:.3f}")
+def save_artifacts(model, artifact_path):
+    joblib.dump(model, Path(artifact_path) / "model.pkl")
+
+
+
+def set_mlflow(model, scores):
+    with mlflow.start_run():
+        mlflow.log_metric("RMSE", scores)
+        mlflow.prophet.log_model(model)

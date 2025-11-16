@@ -9,5 +9,6 @@
     "AVERAGE_UPPER": "yhat_upper",
     "AVERAGE_LOWER": "yhat_lower",
     "PERIOD": 24,
-    "OUTPUT_NAME_PNG": "time.png"
+    "OUTPUT_NAME_PNG": "time.png",
+    "RENAME_COLUMNS": {"Date": "ds", "High": "y"}
 }

@@ -9,7 +9,7 @@ def split_train_test(df: pl.DataFrame, test_size: float)->Tuple[pd.DataFrame, pd
     Parameters
     ----------
     df : pl.DataFrame
-        前処理が終わったdf
+        前処理が終わったpl.df
     test_size : float
         テストの割合
 

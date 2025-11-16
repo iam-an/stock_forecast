@@ -1,7 +1,7 @@
 import yfinance as yf
 import polars as pl
 
-def get_yfinace(company_name, start, end):
+def get_yfinace(company_name: str, start, end)->pl.DataFrame:
     company = yf.Ticker(company_name) 
     df_company_pd = company.history(start=start, end=end)
     # timezoneを削除(prophetに入らないから)
