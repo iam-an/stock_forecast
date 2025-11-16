@@ -10,6 +10,6 @@ def make_model_prophet(train, test, target: str, date_col: str = "Date"):
 
 
     model.fit(train)
-    y_pred_test = model.predict(test.drop("y", axis=1))
+    y_pred_test = model.predict(test[["ds"]])
 
     return y_pred_test, test, train
