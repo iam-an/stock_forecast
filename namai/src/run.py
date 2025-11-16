@@ -52,6 +52,7 @@ def main():
 # make graph by plotly
 # 日付と銘柄をいれる意識
 # 本番は作ったmodelをいれる
+# try
 
 if __name__ == "__main__":
     main()
