@@ -35,8 +35,8 @@ def main():
     save_artifacts(model=model_fitted, artifact_path=OUTPUT)
     y_pred_test = model_fitted.predict(test[["ds"]])
     
-    mae, rmse = evaluate_score(test=test[pred_target], y_pred_test=y_pred_test[average])
-    set_mlflow(model=model_fitted, scores=rmse, artifacts=[OUTPUT, CONFIG])
+    scores = evaluate_score(test=test[pred_target], y_pred_test=y_pred_test[average])
+    set_mlflow(model=model_fitted, scores=scores, artifacts=[OUTPUT, CONFIG])
     make_plot_time(
         ds_train=train[pred_feature],
         y_train=train[pred_target],
