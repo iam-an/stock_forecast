@@ -21,7 +21,13 @@ def save_artifacts(model, artifact_path):
 
 
 
-def set_mlflow(model, scores):
-    with mlflow.start_run():
+def set_mlflow(model, scores, artifacts):
+    mlflow.end_run()
+    mlflow.set_experiment("try_experiment")
+    with mlflow.start_run() as run:
+        run_id = run.info.run_id
+        mlflow.set_tag("mlflow.runName", run_id)
         mlflow.log_metric("RMSE", scores)
         mlflow.prophet.log_model(model)
+        for i in artifacts:
+            mlflow.log_artifact(i)
