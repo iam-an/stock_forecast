@@ -1,5 +1,7 @@
 notebook/
 .png
 output/
+mlruns/
+*.json
 __pycache__/
 .egg-info

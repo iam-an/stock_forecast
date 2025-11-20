@@ -4,6 +4,7 @@ import mlflow
 import mlflow.prophet
 import joblib
 from pathlib import Path
+import json
 
 def evaluate_score(test, y_pred_test)->dict:
     # test データの実測値
@@ -19,6 +20,9 @@ def evaluate_score(test, y_pred_test)->dict:
 def save_artifacts(model, artifact_path):
     joblib.dump(model, Path(artifact_path) / "model.pkl")
 
+def write_to_json(file, **settings):
+    with open(file, "w", encoding="utf-8") as f:
+        json.dump(settings, f, indent=4)
 
 
 def set_mlflow(model, scores: dict, artifacts):
