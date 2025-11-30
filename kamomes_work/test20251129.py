@@ -125,14 +125,14 @@ plt.show()
 plt.figure(figsize=(12,6))
 
 # 学習用データ
-plt.plot(df_train["ds"], df_train["y"], label="Training Data", color="blue")
+#plt.plot(df_train["ds"], df_train["y"], label="Training Data", color="blue")
 
 # 評価用データ
 plt.plot(eval_data.index, eval_data["Close"], label="Evaluation Data", color="orange")
 # 予測結果（直近1年のみ）
 plt.plot(forecast_eval["ds"], forecast_eval["yhat"], label="Predicted (1y)", color="green", linestyle="--")
 
-plt.xlim(2024-11-28 00:00:00, forecast_eval["ds"][-1])
+#plt.xlim("2024-11-28 00:00:00", forecast_eval["ds"][-1])
 plt.xlabel("Date")
 plt.ylabel("Price (JPY)")
 plt.legend()
