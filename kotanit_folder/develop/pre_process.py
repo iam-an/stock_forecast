@@ -15,6 +15,7 @@ def stl_decomposition(df):
 
     # 分解結果
     df = df.with_columns([
+        pl.Series("High", target),
         pl.Series("trend", result.trend),
         pl.Series("seasonal", result.seasonal),
         pl.Series("resid", result.resid)
@@ -27,28 +28,45 @@ def pre_process_No1():
 
     """
     コンセプト：
-    データの時系列関係を利用するため、過去n日分のデータから明日の予測を行うこと繰り返す
+    データの時系列関係を利用するため、過去in_window日分のデータからout_window日分の予測を行うこと繰り返す
+    前処理内容：
+    source_data(dfに格納されている予測対象データ)を入力：in_window日分一塊、出力：out_window日分一塊ものをたくさん用意する（一日ずらしで作成）
+    学習用とテスト用で分ける（一塊は維持）
     """
     from read_API_data import read_datasets
     df, settings = read_datasets() 
+    in_window   = int(settings["in_window"])
+    out_window  = int(settings["out_window"])
+
+    datasets = {}
+    datasets["target"] = df["High"]
     if settings["stl"]:
         df = stl_decomposition(df)
         target_cols = ["trend", "seasonal"]
     else:
         target_cols = ["High"]
 
-    datasets = {}
-    datasets["Times"] = df["Times"]
     for target_col in target_cols:
-        target = np.array(df[target_col])
 
-        #学習用データセット作成
-        n = 10
-        X, y = [], []
+        # --- データセットの作成 ---
+        source_data = df[target_col].to_numpy()
 
-        for i in range(len(target)-n):
-            X.append(target[i:i+n])
-            y.append(target[i+n])
+        # 入力(X): in_window営業日
+        # 出力(y): out_window営業日
+        X = []
+        y = []
+
+        # データをスライドさせながら学習用ペアを作成
+        # データの長さから、ウィンドウサイズ分を引いた回数だけループ
+        for i in range(len(source_data) - in_window - out_window + 1):
+            # 入力データ: i番目から i+10番目まで
+            window_X = source_data[i : i + in_window]
+            
+            # 正解データ: 入力の直後から5日分
+            window_y = source_data[i + in_window : i + in_window + out_window]
+            
+            X.append(window_X)
+            y.append(window_y)
 
         X = np.array(X)
         y = np.array(y)
@@ -56,10 +74,11 @@ def pre_process_No1():
         # 学習・テスト分割
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
         
-        datasets[target_col] = target
+        datasets[target_col] = source_data
         datasets[f"{target_col}:X_train"] = X_train 
         datasets[f"{target_col}:X_test"]  = X_test 
         datasets[f"{target_col}:y_train"] = y_train 
         datasets[f"{target_col}:y_test"]  = y_test
 
     return datasets, settings
+

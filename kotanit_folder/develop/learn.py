@@ -7,10 +7,11 @@ import numpy as np
 """model_choose"""
 from statsmodels.tsa.arima.model import ARIMA
 #model = ARIMA(order=(1, 1, 1))
-from sklearn.linear_model import LinearRegression
-model = LinearRegression()
+
 
 def learn_classical_regression():
+    from sklearn.linear_model import LinearRegression
+    model = LinearRegression()
     from pre_process import pre_process_No1
     datasets, settings = pre_process_No1()
 
@@ -26,5 +27,10 @@ def learn_classical_regression():
         # 予測
         datasets[f"{target_col}:y_test_pred"]  = model.predict(datasets[f"{target_col}:X_test"])
         datasets[f"{target_col}:y_train_pred"] = model.predict(datasets[f"{target_col}:X_train"])
+        
+        model = LinearRegression()
 
     return datasets, settings
+
+datasets, settings = learn_classical_regression()
+# %%

@@ -59,3 +59,18 @@ def read_datasets():
 
     return df, settings
 
+"""
+return
+
+df
+polarsのデータフレーム
+”High”：対象銘柄の一日間の高値データ（範囲はsettingsの"hist_period"依存）
+
+settings
+辞書型
+"company"     : 対象銘柄
+"hist_period" : 株価データ取得範囲
+"hist_inter"  : 株価データ取得頻度
+"stl"         : stl分解をするか？
+
+"""
