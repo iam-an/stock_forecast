@@ -25,12 +25,12 @@ output_name_png = settings["OUTPUT_NAME_PNG"]
 rename_map = settings["RENAME_COLUMNS"]
 
 
+
+
 def main():
     df = get_yfinace(company_name=company, start=start, end=end)
     df = rename_for_prophet(df, rename_map)
-    df = df.to_pandas()
     df_stl = use_stl(target = "y", df=df, period=period)
-    df_stl = pl.from_pandas(df_stl)
     train, test = split_train_test(df=df_stl, test_size=0.2)
     model_fitted = make_model_prophet(train)
     save_artifacts(model=model_fitted, artifact_path=OUTPUT)
@@ -55,6 +55,9 @@ def main():
 # 本番は作ったmodelをいれる
 # try
 # loggerの設定
+# suffix
+# assert
+# tabpfn
 
 if __name__ == "__main__":
     main()

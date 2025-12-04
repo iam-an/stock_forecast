@@ -27,12 +27,12 @@ def write_to_json(file, **settings):
 
 def set_mlflow(model, scores: dict, artifacts):
     mlflow.end_run()
+    mlflow.set_tracking_uri("sqlite:///mlflow.db")
     mlflow.set_experiment("try_experiment")
     with mlflow.start_run() as run:
         run_id = run.info.run_id
         mlflow.set_tag("mlflow.runName", run_id)
         for key, value in scores.items():
             mlflow.log_metric(key, value)
-        mlflow.prophet.log_model(model)
         for i in artifacts:
             mlflow.log_artifact(i)

@@ -10,6 +10,7 @@ dependencies = [
     "mlflow>=3.6.0",
     "numpy>=2.3.3",
     "pandas>=2.3.2",
+    "plotly>=6.5.0",
     "polars>=1.33.1",
     "prophet>=1.1.7",
     "pyarrow>=21.0.0",
@@ -17,4 +18,18 @@ dependencies = [
     "scipy>=1.16.2",
     "statsmodels>=0.14.5",
     "yfinance>=0.2.66",
+]
+
+[tool.uv.workspace]
+members = [
+    ".",
+    ".",
+]
+
+[tool.uv.sources]
+project-venv = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "project-venv",
 ]

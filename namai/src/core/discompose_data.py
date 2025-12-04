@@ -1,9 +1,10 @@
 from statsmodels.tsa.seasonal import STL
 import pandas as pd
 import polars as pl
+from utils.pl_pd import convert_pd_pl
 
-def use_stl(target: str, df: pd.DataFrame, period: int)->pd.DataFrame:
-    print(df)
+@convert_pd_pl
+def use_stl(target: str, df: pl.DataFrame, period: int)->pl.DataFrame:
     y = df[target]
     stl = STL(y, period=period)
     result = stl.fit()
