@@ -17,5 +17,6 @@ def rename_for_prophet(df: pl.DataFrame, rename_map: dict)->pl.DataFrame:
         renamed df
     """
     df = df.rename(rename_map)
+    assert "ds" in df.columns and "y" in df.columns, "rename_mapに'ds'と'y'の情報を入れてください"
     return df
 

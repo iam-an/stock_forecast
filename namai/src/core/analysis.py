@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import mlflow
 import mlflow.prophet
 import joblib
@@ -14,7 +14,8 @@ def evaluate_score(test, y_pred_test)->dict:
 
     mae = mean_absolute_error(y_true, y_pred)
     rmse = np.sqrt(mean_squared_error(y_true, y_pred))
-    scores = {"MAE": mae, "RMSE": rmse}
+    r2 = r2_score(y_true=test, y_pred=y_pred)
+    scores = {"MAE": mae, "RMSE": rmse, "R2": r2}
     return scores
 
 def save_artifacts(model, artifact_path):
@@ -26,6 +27,7 @@ def write_to_json(file, **settings):
 
 
 def set_mlflow(model, scores: dict, artifacts):
+    #  uv run mlflow server --backend-store-uri sqlite:///mlflow.db
     mlflow.end_run()
     mlflow.set_tracking_uri("sqlite:///mlflow.db")
     mlflow.set_experiment("try_experiment")
