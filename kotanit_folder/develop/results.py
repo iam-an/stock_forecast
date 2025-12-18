@@ -1,39 +1,75 @@
 
 #%%
-from sklearn.metrics import r2_score, mean_squared_error
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import random
+import warnings
+warnings.filterwarnings('ignore')
+from evaluation import pred_score
 
 #%%
-from learn import learn_No1
-y_test, y_train, y_test_pred, y_train_pred = learn_No1()
-#%%
-# 評価
+#結果の読み出し
+from learn import learn_classical_regression
+datasets, settings = learn_classical_regression()
+in_window  = int(settings["in_window"])
+out_window = int(settings["out_window"])
+if settings["stl"]:
+    target_cols = ["trend", "seasonal"]
+else:
+    target_cols = ["High"]
 
-print("R² score:", r2_score(y_test, y_test_pred))
-print("RMSE:", np.sqrt(mean_squared_error(y_test, y_test_pred)))
 
-#%%
-#可視化
-#mpl.rcParams["font.family"] = "Arial"
-#mpl.rcParams["font.size"] = 17.5
-fig, ax = plt.subplots(1,2, figsize=(7,3))
-ax.spines['top'].set_linewidth(2)
-ax.spines['top'].set_color('black')
-ax.spines['right'].set_linewidth(2)
-ax.spines['right'].set_color('black')
-ax.spines['left'].set_linewidth(2)
-ax.spines['left'].set_color('black')
-ax.spines['bottom'].set_linewidth(2)
-ax.spines['bottom'].set_color('black')
-ax.tick_params(direction='in', length=6, width=2, color='black', bottom=False) 
+#ランダムにcount個testデータセットを選んで、画像表示
+count = 5 #結果を確認する数
+# リスト内包表記を使って5個の乱数を生成
+random_numbers = [random.randint(0, datasets[f"{target_cols[0]}:y_test"].shape[0]-1) for _ in range(5)]
+for target_col in target_cols:
+    X_test, X_train       = datasets[f"{target_col}:X_test"], datasets[f"{target_col}:X_train"]
+    y_test, y_test_pred   = datasets[f"{target_col}:y_test"], datasets[f"{target_col}:y_test_pred"]
+    y_train, y_train_pred = datasets[f"{target_col}:y_train"], datasets[f"{target_col}:y_train_pred"]
 
-ax[0].set_title("test")
-ax[0].scatter(y_test, y_test_pred, s=1)
-ax[0].axline([min(y_train),min(y_train)],[max(y_train),max(y_train)])
+    for i in random_numbers:
+        fig, ax = plt.subplots(1, 1, figsize=(7, 5))
+        axes = np.ravel(ax)  # 1軸でも複数軸でも平坦化
+        for a in axes:
+            for side in ['top', 'right', 'left', 'bottom']:
+                a.spines[side].set_color('black')
+                a.spines[side].set_linewidth(2)
+            a.tick_params(direction='in', length=6, width=2, color='black')
 
-ax[1].set_title("train")
-ax[1].scatter(y_train, y_train_pred, s=1)
-ax[1].axline([min(y_train),min(y_train)],[max(y_train),max(y_train)])
+        pred_score(y_test[i], y_test_pred[i], make_fig=False)
+        ax.set_title(f"{target_col}:test")
+        ax.plot(np.append(X_test[i], y_test[i]), linewidth=5, alpha=0.5, color="black", marker="o", label="raw_data")
+        ax.plot(np.arange(in_window-1,in_window+out_window), np.append(X_test[i][-1], y_test_pred[i]), linewidth=2, color="r", marker="o", label="pred_data")
+        ax.legend()
+
+
+# %%
+
+if settings["stl"]:
+    y_test_pred_total = np.array(datasets["trend:y_test_pred"]) + np.array(datasets["seasonal:y_test_pred"])
+    X_test_total      = np.array(datasets["trend:X_test"]) + np.array(datasets["seasonal:X_test"]) 
+    y_test_total      = np.array(datasets["trend:y_test"]) + np.array(datasets["seasonal:y_test"])
+
+    for i in random_numbers:
+        fig, ax = plt.subplots(1, 1, figsize=(7, 5))
+        axes = np.ravel(ax)  # 1軸でも複数軸でも平坦化
+        for a in axes:
+            for side in ['top', 'right', 'left', 'bottom']:
+                a.spines[side].set_color('black')
+                a.spines[side].set_linewidth(2)
+            a.tick_params(direction='in', length=6, width=2, color='black')
+        
+        j = i+datasets[f"{target_cols[0]}:y_train"].shape[0]
+        pred_score(datasets["target"][j+in_window:j+in_window+out_window],  y_test_pred_total[i]+datasets["resid"][j+in_window:j+in_window+out_window], make_fig=False)
+        
+        ax.set_title(f"total")
+        ax.plot(datasets["target"][j:j+in_window+out_window], label="raw_data", color="black", alpha=0.5, marker="o", linewidth=5)
+        ax.plot(np.arange(in_window-1,in_window+out_window), 
+                np.append(datasets["target"][j+in_window-1], y_test_pred_total[i]+datasets["resid"][j+in_window:j+in_window+out_window]), 
+                linewidth=2, color="r", marker="o", label="pred_data")
+        ax.legend()
+
+
 # %%
