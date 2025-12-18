@@ -1,8 +1,0 @@
-{
-    "company"      : "6701.T",
-    "hist_period"  : "1y",
-    "hist_inter"   : "1d",
-    "in_window"    : "10",
-    "out_window"   : "5",
-    "stl"          : true
-}
