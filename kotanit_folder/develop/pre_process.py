@@ -39,10 +39,11 @@ def pre_process_No1():
     out_window  = int(settings["out_window"])
 
     datasets = {}
-    datasets["target"] = df["High"]
+    datasets["target"] = df["High"].to_list()
     if settings["stl"]:
         df = stl_decomposition(df)
         target_cols = ["trend", "seasonal"]
+        datasets["resid"] = df["resid"].to_list()
     else:
         target_cols = ["High"]
 
@@ -74,7 +75,7 @@ def pre_process_No1():
         # 学習・テスト分割
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
         
-        datasets[target_col] = source_data
+        datasets[target_col] = source_data.tolist()
         datasets[f"{target_col}:X_train"] = X_train 
         datasets[f"{target_col}:X_test"]  = X_test 
         datasets[f"{target_col}:y_train"] = y_train 
@@ -82,3 +83,5 @@ def pre_process_No1():
 
     return datasets, settings
 
+datasets, settings = pre_process_No1()
+# %%

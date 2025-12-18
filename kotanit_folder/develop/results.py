@@ -48,3 +48,28 @@ for target_col in target_cols:
 # %%
 
 if settings["stl"]:
+    y_test_pred_total = np.array(datasets["trend:y_test_pred"]) + np.array(datasets["seasonal:y_test_pred"])
+    X_test_total      = np.array(datasets["trend:X_test"]) + np.array(datasets["seasonal:X_test"]) 
+    y_test_total      = np.array(datasets["trend:y_test"]) + np.array(datasets["seasonal:y_test"])
+
+    for i in random_numbers:
+        fig, ax = plt.subplots(1, 1, figsize=(7, 5))
+        axes = np.ravel(ax)  # 1軸でも複数軸でも平坦化
+        for a in axes:
+            for side in ['top', 'right', 'left', 'bottom']:
+                a.spines[side].set_color('black')
+                a.spines[side].set_linewidth(2)
+            a.tick_params(direction='in', length=6, width=2, color='black')
+        
+        j = i+datasets[f"{target_cols[0]}:y_train"].shape[0]
+        pred_score(datasets["target"][j+in_window:j+in_window+out_window],  y_test_pred_total[i]+datasets["resid"][j+in_window:j+in_window+out_window], make_fig=False)
+        
+        ax.set_title(f"total")
+        ax.plot(datasets["target"][j:j+in_window+out_window], label="raw_data", color="black", alpha=0.5, marker="o", linewidth=5)
+        ax.plot(np.arange(in_window-1,in_window+out_window), 
+                np.append(datasets["target"][j+in_window-1], y_test_pred_total[i]+datasets["resid"][j+in_window:j+in_window+out_window]), 
+                linewidth=2, color="r", marker="o", label="pred_data")
+        ax.legend()
+
+
+# %%

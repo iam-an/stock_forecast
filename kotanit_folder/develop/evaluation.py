@@ -25,7 +25,7 @@ def pred_score(raw_data, pred_data, make_fig):
         #可視化
         mpl.rcParams["font.family"] = 'DejaVu Sans'
         mpl.rcParams["font.size"] = 11
-        fig, ax = plt.subplots(1, 2, figsize=(7, 3))
+        fig, ax = plt.subplots(1, 1, figsize=(4, 3))
         axes = np.ravel(ax)  # 1軸でも複数軸でも平坦化
         for a in axes:
             for side in ['top', 'right', 'left', 'bottom']:
@@ -33,6 +33,6 @@ def pred_score(raw_data, pred_data, make_fig):
                 a.spines[side].set_linewidth(2)
             a.tick_params(direction='in', length=6, width=2, color='black')
 
-        ax[0].set_title(f"y-y_plot")
-        ax[0].scatter(raw_data, pred_data, s=1)
-        ax[0].axline([min(raw_data),min(raw_data)],[max(raw_data),max(raw_data)])
+        ax.set_title(f"y-y_plot")
+        ax.scatter(raw_data, pred_data, s=1)
+        ax.axline([min(raw_data),min(raw_data)],[max(raw_data),max(raw_data)])

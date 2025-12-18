@@ -1,7 +1,7 @@
 #%%
 import numpy as np
 import matplotlib.pyplot as plt
-import json
+import yaml
 import polars as pl
 import yfinance as yf
 
@@ -21,8 +21,8 @@ yfinance.Ticker(symbol)
 
 def read_datasets():
     #settings
-    with open("settings.json", "r", encoding="utf-8") as f:
-        settings = json.load(f)
+    with open("settings.yaml", "r", encoding="utf-8") as f:
+        settings = yaml.safe_load(f)
     company = settings["company"]
     hist_period = settings["hist_period"]
     hist_inter = settings["hist_inter"]
@@ -74,3 +74,5 @@ settings
 "stl"         : stl分解をするか？
 
 """
+if __name__ == "__main__":
+    read_datasets()
