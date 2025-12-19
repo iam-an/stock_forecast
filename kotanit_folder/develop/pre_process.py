@@ -8,9 +8,9 @@ from sklearn.model_selection import train_test_split
 
 #方針としてSTL分解して、トレンドや季節性だけを取り出して予測する方向性にする、最後に合わせるイメージ
 
-def stl_decomposition(df):
+def stl_decomposition(df, settings):
     target = df["High"]
-    stl = STL(target, period=30)
+    stl = STL(target, period=settings["stl_period"], robust=True)
     result = stl.fit()
 
     # 分解結果
@@ -41,7 +41,7 @@ def pre_process_No1():
     datasets = {}
     datasets["target"] = df["High"].to_list()
     if settings["stl"]:
-        df = stl_decomposition(df)
+        df = stl_decomposition(df, settings)
         target_cols = ["trend", "seasonal"]
         datasets["resid"] = df["resid"].to_list()
     else:

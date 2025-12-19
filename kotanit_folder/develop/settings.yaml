@@ -13,3 +13,5 @@
 
 #STL予測を行うかどうか
 "stl"          : true
+#周期を指定
+"stl_period"   : 30

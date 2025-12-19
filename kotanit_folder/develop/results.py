@@ -62,12 +62,12 @@ if settings["stl"]:
             a.tick_params(direction='in', length=6, width=2, color='black')
         
         j = i+datasets[f"{target_cols[0]}:y_train"].shape[0]
-        pred_score(datasets["target"][j+in_window:j+in_window+out_window],  y_test_pred_total[i]+datasets["resid"][j+in_window:j+in_window+out_window], make_fig=False)
+        pred_score(datasets["target"][j+in_window:j+in_window+out_window],  y_test_pred_total[i]+np.average(datasets["resid"][j:j+in_window]), make_fig=False)
         
         ax.set_title(f"total")
         ax.plot(datasets["target"][j:j+in_window+out_window], label="raw_data", color="black", alpha=0.5, marker="o", linewidth=5)
         ax.plot(np.arange(in_window-1,in_window+out_window), 
-                np.append(datasets["target"][j+in_window-1], y_test_pred_total[i]+datasets["resid"][j+in_window:j+in_window+out_window]), 
+                np.append(datasets["target"][j+in_window-1], y_test_pred_total[i]+np.average(datasets["resid"][j:j+in_window])), 
                 linewidth=2, color="r", marker="o", label="pred_data")
         ax.legend()
 
