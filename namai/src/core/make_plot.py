@@ -47,4 +47,7 @@ def make_plot_time(ds_train, y_train, ds_test, y_test,\
 
     plt.legend()
     plt.title("Predict vs Actual")
-    plt.savefig(Path(output / fig_name))
+    p = Path(output / fig_name)
+    if p.suffix != ".png":
+        p = p.with_suffix(".png")
+    plt.savefig(p)

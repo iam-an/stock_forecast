@@ -1,22 +1,36 @@
 #%%
 import polars as pl
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score, mean_squared_error
 import matplotlib.pyplot as plt
 import numpy as np
 
-def learn_No1():
-    from pre_process import pre_process_No1
-    X_train, X_test, y_train, y_test = pre_process_No1()
 
-    # モデル作成と学習
+"""model_choose"""
+from statsmodels.tsa.arima.model import ARIMA
+#model = ARIMA(order=(1, 1, 1))
+
+
+def learn_classical_regression():
+    from sklearn.linear_model import LinearRegression
     model = LinearRegression()
-    model.fit(X_train, y_train)
+    from pre_process import pre_process_No1
+    datasets, settings = pre_process_No1()
 
-    # 予測
-    y_test_pred = model.predict(X_test)
-    y_train_pred = model.predict(X_train)
+    if settings["stl"]:
+        target_cols = ["trend", "seasonal"]
+    else:
+        target_cols = ["High"]
 
-    return(y_test, y_train, y_test_pred, y_train_pred)
+    for target_col in target_cols:
 
+        model.fit(datasets[f"{target_col}:X_train"], datasets[f"{target_col}:y_train"])
+
+        # 予測
+        datasets[f"{target_col}:y_test_pred"]  = model.predict(datasets[f"{target_col}:X_test"])
+        datasets[f"{target_col}:y_train_pred"] = model.predict(datasets[f"{target_col}:X_train"])
+        
+        model = LinearRegression()
+
+    return datasets, settings
+
+datasets, settings = learn_classical_regression()
+# %%

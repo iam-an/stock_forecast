@@ -27,6 +27,7 @@ rename_map = settings["RENAME_COLUMNS"]
 
 
 
+
 def main():
     df = get_yfinace(company_name=company, start=start, end=end)
     df = rename_for_prophet(df, rename_map)
@@ -55,7 +56,6 @@ def main():
 # 本番は作ったmodelをいれる
 # try
 # loggerの設定
-# suffix
 # assert
 # tabpfn
 
