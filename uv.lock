@@ -1440,7 +1440,7 @@ wheels = [
 [[package]]
 name = "project-venv"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "ipykernel" },
     { name = "matplotlib" },
@@ -1456,11 +1456,6 @@ dependencies = [
     { name = "statsmodels" },
     { name = "streamlit" },
     { name = "yfinance" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "project-venv" },
 ]
 
 [package.metadata]
@@ -1480,9 +1475,6 @@ requires-dist = [
     { name = "streamlit", specifier = ">=1.52.2" },
     { name = "yfinance", specifier = ">=0.2.66" },
 ]
-
-[package.metadata.requires-dev]
-dev = [{ name = "project-venv", virtual = "." }]
 
 [[package]]
 name = "prompt-toolkit"

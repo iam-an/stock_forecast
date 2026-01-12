@@ -1,3 +1,8 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
 [project]
 name = "project-venv"
 version = "0.1.0"
@@ -21,16 +26,6 @@ dependencies = [
     "yfinance>=0.2.66",
 ]
 
-[tool.uv.workspace]
-members = [
-    ".",
-    ".",
-]
 
-[tool.uv.sources]
-project-venv = { workspace = true }
-
-[dependency-groups]
-dev = [
-    "project-venv",
-]
+[tool.setuptools]
+packages = ["product", "each_workspace"]
