@@ -1,0 +1,78 @@
+#%%
+import numpy as np
+import matplotlib.pyplot as plt
+import yaml
+import polars as pl
+import yfinance as yf
+
+"""
+🔹 yfinance の主なモジュール・関数
+yfinance.download(tickers, ...)
+複数銘柄の時系列株価データをまとめて取得。
+引数: tickers, start, end, period, interval, group_by など。
+
+yfinance.Ticker(symbol)
+個別銘柄オブジェクトを生成。
+ここから各種情報にアクセスできる。
+・history() → 株価データ取得 #pandasのdf
+・info → 基本情報（時価総額、業種など）
+・financials / quarterly_financials → 財務データ
+"""
+
+def read_datasets():
+    #settings
+    with open("settings.yaml", "r", encoding="utf-8") as f:
+        settings = yaml.safe_load(f)
+    company = settings["company"]
+    hist_period = settings["hist_period"]
+    hist_inter = settings["hist_inter"]
+
+    #銘柄別株価データセット
+    stock_dataset = yf.Tickers(company)
+    """
+    history
+    株価データ
+    'Open' → 始値（その日の取引開始時の株価）
+    'High' → 高値（その日の取引中の最高値）
+    'Low' → 安値（その日の取引中の最安値）
+    'Close' → 終値（その日の取引終了時の株価）
+    出来高とイベント
+    'Volume' → 出来高（その日の取引株数）
+    'Dividends' → 配当（その日に配当が出た場合は金額が入る。それ以外は 0）
+    'Stock Splits' → 株式分割（株式分割があった日には分割比率が入る。それ以外は 0）
+    """
+
+    df = yf.download(company, period=hist_period, interval=hist_inter)
+    df = df.reset_index()
+    df = pl.from_pandas(df)
+    df = df.drop(f"('Volume', '{company}')")
+    df = df.rename({"('Date', '')" : "Date"})
+    df = df.rename({f"('Open', '{company}')" : "Open"})
+    df = df.rename({f"('High', '{company}')" : "High"})
+    df = df.rename({f"('Low', '{company}')" : "Low"})
+    df = df.rename({f"('Close', '{company}')" : "Close"})
+    df = df.drop("Open", "Low", "Close")
+
+    min_date = df.select(pl.col("Date").min()).to_series()[0]
+    df = df.with_columns((df["Date"]-min_date).alias("Times"))
+    df = df.with_columns(df["Times"].dt.total_microseconds()/ (24*60*60*1_000_000))
+
+    return df, settings
+
+"""
+return
+
+df
+polarsのデータフレーム
+”High”：対象銘柄の一日間の高値データ（範囲はsettingsの"hist_period"依存）
+
+settings
+辞書型
+"company"     : 対象銘柄
+"hist_period" : 株価データ取得範囲
+"hist_inter"  : 株価データ取得頻度
+"stl"         : stl分解をするか？
+
+"""
+if __name__ == "__main__":
+    read_datasets()

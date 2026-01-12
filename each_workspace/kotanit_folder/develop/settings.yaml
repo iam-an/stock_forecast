@@ -1,0 +1,17 @@
+#銘柄企業（NEC:6701.T）
+"company"      : "6701.T"
+
+#学習期間
+"hist_period"  : "1y"
+#データの取得間隔
+"hist_inter"   : "1d"
+
+#予測に利用する日数
+"in_window"    : "10"
+#予測する日数
+"out_window"   : "5"
+
+#STL予測を行うかどうか
+"stl"          : true
+#周期を指定
+"stl_period"   : 30

@@ -1,0 +1,41 @@
+#%%
+import polars as pl
+import matplotlib.pyplot as plt
+import numpy as np
+import joblib
+
+"""model_choose"""
+from statsmodels.tsa.arima.model import ARIMA
+#model = ARIMA(order=(1, 1, 1))
+
+
+def learn_classical_regression():
+    from sklearn.linear_model import LinearRegression
+    model = LinearRegression()
+    from pre_process import pre_process_No1
+    datasets, settings = pre_process_No1()
+
+    if settings["stl"]:
+        target_cols = ["trend", "seasonal"]
+    else:
+        target_cols = ["High"]
+
+    for target_col in target_cols:
+
+        model.fit(datasets[f"{target_col}:X_train"], datasets[f"{target_col}:y_train"])
+
+        # 予測
+        datasets[f"{target_col}:y_test_pred"]  = model.predict(datasets[f"{target_col}:X_test"])
+        datasets[f"{target_col}:y_train_pred"] = model.predict(datasets[f"{target_col}:X_train"])
+        
+        # モデルの保存
+        joblib.dump(model, f'models/{settings["company"]}_LR_{target_col}.joblib')
+        
+        # モデルの初期化
+        model = LinearRegression()
+        
+        
+    return datasets, settings
+
+datasets, settings = learn_classical_regression()
+# %%
