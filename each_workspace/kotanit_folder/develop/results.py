@@ -5,13 +5,14 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import random
 import warnings
+import joblib
 warnings.filterwarnings('ignore')
 from evaluation import pred_score
 
 #%%
 #結果の読み出し
 from learn import learn_classical_regression
-datasets, settings = learn_classical_regression()
+datasets, settings, models = learn_classical_regression()
 in_window  = int(settings["in_window"])
 out_window = int(settings["out_window"])
 if settings["stl"]:
@@ -70,6 +71,8 @@ if settings["stl"]:
                 np.append(datasets["target"][j+in_window-1], y_test_pred_total[i]+np.average(datasets["resid"][j:j+in_window])), 
                 linewidth=2, color="r", marker="o", label="pred_data")
         ax.legend()
-
+        def total_model(X):
+            return models["trend"].predict(X) + models["seasonal"].predict(X)
+        joblib.dump(total_model, f'models/{settings["company"]}_1week_LR.joblib') 
 
 # %%

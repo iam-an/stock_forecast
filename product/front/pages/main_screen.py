@@ -308,5 +308,10 @@ def main_screen():
         st.write("") # 左側の余白（何もしない）
     with empty_r:
         st.write("") # 右側の余白（何もしない）
+    
+    print(selected_stock, selected_period, selected_model)
+    
+    if not (selected_stock == "-" or selected_period == "-" or selected_model == "-"):
+        print("All selections made. Ready to connect!")
 
 main_screen()
