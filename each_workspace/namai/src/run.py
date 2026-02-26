@@ -1,10 +1,10 @@
-from each_workspace.namai.src.core.use_yfinance import get_yfinace
-from each_workspace.namai.src.core.split_data import split_train_test
-from each_workspace.namai.src.core.make_model import make_model_prophet
-from each_workspace.namai.src.core.analysis import evaluate_score, set_mlflow, save_artifacts, write_to_json
-from each_workspace.namai.src.core.make_plot import make_plot_time
-from each_workspace.namai.src.core.discompose_data import use_stl
-from each_workspace.namai.src.core.rename import rename_for_prophet
+from namai.src.core.use_yfinance import get_yfinace
+from namai.src.core.split_data import split_train_test
+from namai.src.core.make_model import make_model_prophet
+from namai.src.core.analysis import evaluate_score, set_mlflow, save_artifacts, write_to_json
+from namai.src.core.make_plot import make_plot_time
+from namai.src.core.discompose_data import use_stl
+from namai.src.core.rename import rename_for_prophet
 from utils.constant import OUTPUT, CONFIG, RESULT
 import yaml
 

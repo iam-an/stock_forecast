@@ -27,5 +27,6 @@ dependencies = [
 ]
 
 
-[tool.setuptools]
-packages = ["product", "each_workspace"]
+[tool.setuptools.packages.find]
+where = ["each_workspace"]
+include = ["namai*"]

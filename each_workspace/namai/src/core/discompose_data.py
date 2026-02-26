@@ -1,6 +1,6 @@
 from statsmodels.tsa.seasonal import STL
 import polars as pl
-from each_workspace.namai.src.utils.pl_pd import convert_pd_pl
+from namai.src.utils.pl_pd import convert_pd_pl
 
 @convert_pd_pl
 def use_stl(target: str, df: pl.DataFrame, period: int)->pl.DataFrame:

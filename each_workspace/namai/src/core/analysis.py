@@ -19,6 +19,7 @@ def evaluate_score(test, y_pred_test)->dict:
     return scores
 
 def save_artifacts(model, artifact_path):
+    Path(artifact_path).mkdir(exist_ok=True)
     joblib.dump(model, Path(artifact_path) / "model.pkl")
 
 def write_to_json(file, **settings):
