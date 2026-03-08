@@ -17,6 +17,7 @@ def learn_classical_regression():
 
     if settings["stl"]:
         target_cols = ["trend", "seasonal"]
+        models = {}
     else:
         target_cols = ["High"]
 
@@ -30,12 +31,12 @@ def learn_classical_regression():
         
         # モデルの保存
         joblib.dump(model, f'models/{settings["company"]}_LR_{target_col}.joblib')
-        
+        models[target_col] = model
         # モデルの初期化
         model = LinearRegression()
         
         
-    return datasets, settings
+    return datasets, settings, models
 
-datasets, settings = learn_classical_regression()
+
 # %%

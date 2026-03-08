@@ -5,13 +5,15 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import random
 import warnings
+import cloudpickle
+from statsmodels.tsa.seasonal import STL
 warnings.filterwarnings('ignore')
 from evaluation import pred_score
 
 #%%
 #結果の読み出し
 from learn import learn_classical_regression
-datasets, settings = learn_classical_regression()
+datasets, settings, models = learn_classical_regression()
 in_window  = int(settings["in_window"])
 out_window = int(settings["out_window"])
 if settings["stl"]:
@@ -70,6 +72,27 @@ if settings["stl"]:
                 np.append(datasets["target"][j+in_window-1], y_test_pred_total[i]+np.average(datasets["resid"][j:j+in_window])), 
                 linewidth=2, color="r", marker="o", label="pred_data")
         ax.legend()
+        
+        def total_model(target):
 
+            target = np.asarray(target).ravel()
+
+            stl = STL(target,
+                    period=settings["stl_period"],
+                    robust=True)
+
+            result = stl.fit()
+
+            window = 5   # ← 学習時と同じ
+            trend_X = result.trend[-window:].reshape(1, -1)
+            seasonal_X = result.seasonal[-window:].reshape(1, -1)
+
+            y_trend = models["trend"].predict(trend_X)
+            y_seasonal = models["seasonal"].predict(seasonal_X)
+
+            return (y_trend + y_seasonal).flatten().tolist()
+
+        with open("models/1day_LR.joblib", "wb") as f:
+            cloudpickle.dump(total_model, f)
 
 # %%

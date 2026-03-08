@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 
 def stl_decomposition(df, settings):
     target = df["High"]
+    np.save(f"models/{settings['company']}_LR.npy", target.to_numpy())
     stl = STL(target, period=settings["stl_period"], robust=True)
     result = stl.fit()
 
