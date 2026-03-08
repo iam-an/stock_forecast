@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
 from animated_bg import animated_background
-from product.back.select_models import select_models
+from back.select_models import select_models
 
 def main_screen():
     st.set_page_config(layout="wide")
