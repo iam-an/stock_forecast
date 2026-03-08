@@ -28,7 +28,6 @@ def learn_classical_regression():
         # 予測
         datasets[f"{target_col}:y_test_pred"]  = model.predict(datasets[f"{target_col}:X_test"])
         datasets[f"{target_col}:y_train_pred"] = model.predict(datasets[f"{target_col}:X_train"])
-        np.save(f"models/{settings['company']}_LR_{target_col}_X_test.npy", datasets[f"{target_col}:X_test"])
         
         # モデルの保存
         joblib.dump(model, f'models/{settings["company"]}_LR_{target_col}.joblib')
