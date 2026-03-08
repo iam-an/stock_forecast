@@ -1,2 +1,3 @@
-from front.pages.login_screen import login
-login()
+from front.pages.login_screen import main
+
+main()
