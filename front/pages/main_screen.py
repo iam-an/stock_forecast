@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
-from animated_bg import animated_background
+from front.pages.animated_bg import animated_background
 from back.select_models import select_models
 
 def main_screen():
@@ -271,12 +271,12 @@ def main_screen():
             pass
 
     with col2:
-        selected_period = st.selectbox("forecast dates", ["-", "1day", "1week", "1month"])
+        selected_period = st.selectbox("forecast dates", ["-", "1day", "1week", "1month", "1year"])
         if selected_period:
             pass
 
     with col3:
-        selected_model = st.selectbox("select model", ["-", "LR", "モデルB", "モデルC"])
+        selected_model = st.selectbox("select model", ["-", "LR", "prophet-f", "prophet-w"])
         if selected_model:
             pass
 
@@ -315,6 +315,8 @@ def main_screen():
         elif selected_period == "1week":
             pass
         elif selected_period == "1month":
+            pass
+        elif selected_period == "1year":
             pass
 
 main_screen()
