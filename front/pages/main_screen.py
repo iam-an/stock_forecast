@@ -318,5 +318,3 @@ def main_screen():
             pass
         elif selected_period == "1year":
             pass
-
-main_screen()

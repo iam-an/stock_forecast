@@ -1,8 +1,7 @@
 import streamlit as st
+from front.pages.main_screen import main_screen
 from front.pages.animated_bg import animated_background
 
-if "page" not in st.session_state:
-    st.session_state.page = "login"
 
 
 def login():
@@ -239,10 +238,3 @@ div[data-testid="stButton"] > button:hover {
     if st.button("CONNECT"):
         st.session_state.page = "main_screen"
         st.rerun()
-
-def main():
-  if st.session_state.page == "login":
-    login()
-  else:
-    from front.pages.main_screen import main_screen
-    main_screen()
