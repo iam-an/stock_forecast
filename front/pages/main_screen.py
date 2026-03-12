@@ -263,58 +263,43 @@ def main_screen():
         </style>
         """, unsafe_allow_html=True)
         
-    empty_l, col1, col2, col3, empty_r = st.columns([1,2,2,2,1])
-
-    with col1:
-        selected_stock = st.selectbox("select ticker", ["-","NTT", "Nvidia", "AMD", "Google", "Amazon", "Vodafone", "ベルーナ", "オルカン", "S&P500"])
-        if selected_stock:
-            pass
-
-    with col2:
-        selected_period = st.selectbox("forecast dates", ["-", "1day", "1week", "1month", "1year"])
-        if selected_period:
-            pass
-
-    with col3:
-        selected_model = st.selectbox("select model", ["-", "LR", "prophet-f", "prophet-w"])
-        if selected_model:
-            pass
-
-    with empty_l:
+    empty_left, col1, col2, col3, empty_right = st.columns([1,2,2,2,1])
+    with empty_left:
         st.write("") # 左側の余白（何もしない）
-    with empty_r:
+    with empty_right:
         st.write("") # 右側の余白（何もしない）
+    with col1:
+        selected_stock = st.selectbox("select ticker", ["-","NTT", "Nvidia", "AMD", "Google", "Amazon", "Vodafone", "ベルーナ", "オルカン", "S&P500"], key="stock")
+    with col2:
+        selected_period = st.selectbox("forecast dates", ["-", "1day", "1week", "1month", "1year"], key="period")
+    with col3:
+        selected_model = st.selectbox("select model", ["-", "LR", "prophet-f", "prophet-w"], key="model")
         
     empty_l, content, empty_r = st.columns([1, 5, 1])
-    
-    with content:
-        act_date, act_data, pred_date, pred_data = select_models(selected_stock, selected_period, selected_model)
-
-        # 1. グラフオブジェクトの作成
-        fig = px.line()
-        fig.add_scatter(x=act_date, y=act_data, mode='lines+markers', name='Actual', line=dict(color='blue'))
-        fig.add_scatter(x=pred_date, y=pred_data, mode='lines+markers', name='Predicted', line=dict(color='red'))
-        fig.update_layout(margin=dict(l=10, r=10, t=50, b=20)) # 左・右・上・下の余白
-        fig.update_layout(height=650)
-        fig.update_layout(font=dict(family="\"BIZ UDPGothic\", \"BIZ UDPゴシック\", Meiryo, sans-serif", size=18, color="white"))
-        fig.update_layout(xaxis=dict(title=dict(text="Time（dates）",font=dict(size=18)),tickfont=dict(size=18)))
-        fig.update_layout(yaxis=dict(title=dict(text="Stock Price （￥）",font=dict(size=24)),tickfont=dict(size=24)))
-        # 2. Streamlitで表示
-        st.plotly_chart(fig, use_container_width=True)
-    
     with empty_l:
         st.write("") # 左側の余白（何もしない）
     with empty_r:
         st.write("") # 右側の余白（何もしない）
+    with content:
+        if not (selected_stock == "-" or selected_period == "-" or selected_model == "-"):
+            st.cache_data.clear()
+            st.cache_resource.clear()
+            act_date, act_data, pred_date, pred_data = select_models(selected_stock, selected_period, selected_model)
+
+            # 1. グラフオブジェクトの作成
+            fig = px.line()
+            fig.add_scatter(x=act_date, y=act_data, mode='lines+markers', name='Actual', line=dict(color='blue'))
+            fig.add_scatter(x=pred_date, y=pred_data, mode='lines+markers', name='Predicted', line=dict(color='red'))
+            fig.update_layout(margin=dict(l=10, r=10, t=50, b=20)) # 左・右・上・下の余白
+            fig.update_layout(height=650)
+            fig.update_layout(font=dict(family="\"BIZ UDPGothic\", \"BIZ UDPゴシック\", Meiryo, sans-serif", size=18, color="white"))
+            fig.update_layout(xaxis=dict(title=dict(text="Time（dates）",font=dict(size=18)),tickfont=dict(size=18)))
+            fig.update_layout(yaxis=dict(title=dict(text="Stock Price （￥）",font=dict(size=24)),tickfont=dict(size=24)))
+            # 2. Streamlitで表示
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.write("") # 何もしない
+            pass
     
     print(selected_stock, selected_period, selected_model)
     
-    if not (selected_stock == "-" or selected_period == "-" or selected_model == "-"):
-        if selected_period == "1day":
-            pass
-        elif selected_period == "1week":
-            pass
-        elif selected_period == "1month":
-            pass
-        elif selected_period == "1year":
-            pass

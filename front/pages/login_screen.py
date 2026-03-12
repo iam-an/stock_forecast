@@ -234,7 +234,7 @@ div[data-testid="stButton"] > button:hover {
 """,
         unsafe_allow_html=True,
     )
-
+    print(st.session_state.page)
     if st.button("CONNECT"):
         st.session_state.page = "main_screen"
         st.rerun()
