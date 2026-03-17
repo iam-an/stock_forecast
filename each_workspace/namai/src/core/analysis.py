@@ -20,7 +20,7 @@ def evaluate_score(test, y_pred_test)->dict:
 
 def save_artifacts(model, artifact_path, company):
     Path(artifact_path).mkdir(exist_ok=True)
-    joblib.dump(model, Path(artifact_path) / f"{company}.pkl")
+    joblib.dump(model, Path(artifact_path) / f"{company}.joblib")
 
 def write_to_json(file, **settings):
     with open(file, "w", encoding="utf-8") as f:

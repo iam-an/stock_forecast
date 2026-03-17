@@ -5,7 +5,7 @@ from namai.src.core.analysis import evaluate_score, set_mlflow, save_artifacts, 
 from namai.src.core.make_plot import make_plot_time
 from namai.src.core.discompose_data import use_stl
 from namai.src.core.rename import rename_for_prophet
-from utils.constant import OUTPUT, CONFIG, RESULT
+from namai.src.utils.constant import OUTPUT, CONFIG, RESULT
 import yaml
 import click
 import numpy as np

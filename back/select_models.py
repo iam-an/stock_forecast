@@ -6,28 +6,27 @@ import matplotlib.pyplot as plt
 import yfinance as yf
 import polars as pl
 import yaml
-from datetime import datetime, timedelta
+from datetime import timedelta
 import jpholiday
 import sys
+from namai.src.utils.constant import MODELS, COMPANIES
 
-"""settings"""
-company = "NTT"
-pred_range = "1week"
-model_type = "LR"
+# """settings"""
+# company = "NTT"
+# pred_range = "1week"
+# model_type = "LR"
 
 def select_models(company, pred_range, model_type):
-    """select model"""
-    base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    model_path = f"{base_path}/models/{company}/{pred_range}_{model_type}.joblib"
+    # select model
+    model_path = MODELS / company / f"{pred_range}_{model_type}.joblib"
+    print(model_path)
     try:
         model = joblib.load(model_path)
     except:
-        try:
-            model = cloudpickle.load(open(model_path, 'rb'))
-        except:
-            sys.exit()
+        with open(model_path, "rb") as f:
+            model = cloudpickle.load(f)
 
-    """data import"""
+    # 期間決定
     if pred_range == "1day":
         hist_period = "1mo"
         hist_inter = "1d"
@@ -40,22 +39,26 @@ def select_models(company, pred_range, model_type):
     elif pred_range == "1year":
         hist_period = "3y"
         hist_inter = "1d"
-
-    with open(f"{base_path}/back/ticker_master.yaml", "r", encoding="utf-8") as f:
+    # 略称の取得
+    with open(COMPANIES / "ticker_master.yaml", "r", encoding="utf-8") as f:
         ticker_master = yaml.safe_load(f)
     ticker = ticker_master[company]
+    print(ticker)
+    # common process independ on period
+    # data cleaning
+    df = yf.download(ticker, period=hist_period, interval=hist_inter, threads=False)
+    df = df.reset_index()
+    df = pl.from_pandas(df)
+    df = df.drop(f"('Volume', '{ticker}')")
+    df = df.rename({"('Date', '')" : "Date"})
+    df = df.rename({f"('Open', '{ticker}')" : "Open"})
+    df = df.rename({f"('High', '{ticker}')" : "High"})
+    df = df.rename({f"('Low', '{ticker}')" : "Low"})
+    df = df.rename({f"('Close', '{ticker}')" : "Close"})
+    df = df.drop("Open", "Low", "Close")
 
     if pred_range == "1day" or pred_range == "1week":
-        df = yf.download(ticker, period=hist_period, interval=hist_inter)
-        df = df.reset_index()
-        df = pl.from_pandas(df)
-        df = df.drop(f"('Volume', '{ticker}')")
-        df = df.rename({"('Date', '')" : "Date"})
-        df = df.rename({f"('Open', '{ticker}')" : "Open"})
-        df = df.rename({f"('High', '{ticker}')" : "High"})
-        df = df.rename({f"('Low', '{ticker}')" : "Low"})
-        df = df.rename({f"('Close', '{ticker}')" : "Close"})
-        df = df.drop("Open", "Low", "Close")
+        print("enter if")
 
         min_date = df.select(pl.col("Date").min()).to_series()[0]
         df = df.with_columns((df["Date"]-min_date).alias("Times"))
@@ -78,6 +81,22 @@ def select_models(company, pred_range, model_type):
         pred_date = [d.strftime("%m/%d") for d in pred_date]
     
     elif pred_range == "1month" or pred_range == "1year":
+        print("enter")
+        from namai.src.core.use_yfinance import get_yfinace
+        from namai.src.core.split_data import split_train_test
+        from namai.src.core.make_model import make_model_prophet
+        from namai.src.core.analysis import evaluate_score, set_mlflow, save_artifacts, write_to_json
+        from namai.src.core.make_plot import make_plot_time
+        from namai.src.core.discompose_data import use_stl
+        from namai.src.core.rename import rename_for_prophet
+        df = rename_for_prophet(df, rename_map)
+        df = df.rename({"Date": "ds"})
+        df = df.rename({"High": "y"})
+        print(hist_period)
+        df_stl = use_stl(target = "y", df=df, period=hist_period)
+        train = df_stl.to_pandas()
+        model_fitted = make_model_prophet(train)
+        save_artifacts(model=model_fitted, artifact_path=OUTPUT, company=company)
         
         pass
 
