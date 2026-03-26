@@ -270,7 +270,7 @@ def main_screen():
     with col2:
         selected_period = st.selectbox("forecast dates", ["-", "1day", "1week", "1month", "1year"], key="period")
     with col3:
-        selected_model = st.selectbox("select model", ["-", "LR", "prophet-f", "prophet-w"], key="model")
+        selected_model = st.selectbox("select model", ["-", "LR(for day or week)", "prophet(for month or year)"], key="model")
         
     empty_l, content, empty_r = st.columns([1, 5, 1])
     with empty_l:
