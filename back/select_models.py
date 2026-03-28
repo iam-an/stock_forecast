@@ -7,9 +7,14 @@ import yfinance as yf
 import polars as pl
 import yaml
 from datetime import timedelta
-import jpholiday
 import sys
+from pathlib import Path
 from namai.src.utils.constant import MODELS, COMPANIES
+
+try:
+    import jpholiday
+except ImportError:
+    jpholiday = None
 
 # """settings"""
 # company = "NTT"
@@ -27,7 +32,43 @@ def load_model(company, pred_range, model_type):
     assert model is not None, "modelがありません"
     return model
 
+
+def select_month_model_from_kamomes(company):
+    """
+    1month だけは kamomes_work の橋渡し関数へ委譲します。
+
+    こうしておくと、
+    - root 側の ticker_master に依存しない
+    - 既存の day/week/year には触らない
+    - kamomes 側の保存物とロジックだけで完結できる
+    という形にできます。
+    """
+    kamomes_root = Path(__file__).resolve().parents[1] / "each_workspace" / "kamomes_work"
+    if str(kamomes_root) not in sys.path:
+        sys.path.insert(0, str(kamomes_root))
+
+    from src.core.streamlit_month_bridge import select_streamlit_month
+
+    return select_streamlit_month(company=company, history_window=30, forecast_window=30)
+
+
+def is_business_day(base_date):
+    """
+    jpholiday が入っていれば祝日も除外し、
+    ない環境では平日判定だけで落ちずに進めます。
+    """
+    if base_date.weekday() >= 5:
+        return False
+    if jpholiday is None:
+        return True
+    return not jpholiday.is_holiday(base_date)
+
 def select_models(company, pred_range, model_type):
+
+    # 1month は kamomes 側の joblib と補助ロジックを使うので、
+    # root の共通前処理へ入る前に早めに切り分けます。
+    if pred_range == "1month":
+        return select_month_model_from_kamomes(company)
 
     # 期間決定
     if pred_range == "1day":
@@ -81,7 +122,7 @@ def select_models(company, pred_range, model_type):
 
         while len(pred_date) < len(pred_data):
             base_date = base_date + timedelta(days=1)
-            if base_date.weekday() < 5 and not jpholiday.is_holiday(base_date):
+            if is_business_day(base_date):
                 pred_date.append(base_date)
         pred_date = [base_date.strftime("%m/%d") for base_date in pred_date]
     
@@ -107,7 +148,7 @@ def select_models(company, pred_range, model_type):
         for i in range(len(pred_data)):
             date = pred_data["ds"].iloc[i]
             if date > last_date:
-                if date.weekday() < 5 and not jpholiday.is_holiday(date):
+                if is_business_day(date):
                     filtered_dates.append(date)  # 👈 文字列やめる
                     filtered_values.append(pred_data["yhat"].iloc[i])
 
@@ -122,4 +163,3 @@ def select_models(company, pred_range, model_type):
 
     return act_date, act_data, pred_date, pred_data
         
-
