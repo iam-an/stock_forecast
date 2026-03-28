@@ -8,11 +8,11 @@ import polars as pl
 import yaml
 from datetime import timedelta
 import sys
-from pathlib import Path
+from pathlib import Path  # 大畑追加
 from namai.src.utils.constant import MODELS, COMPANIES
 
 try:
-    import jpholiday
+    import jpholiday  # 大畑追加 祝日判定のためのライブラリ
 except ImportError:
     jpholiday = None
 
@@ -35,13 +35,8 @@ def load_model(company, pred_range, model_type):
 
 def select_month_model_from_kamomes(company):
     """
-    1month だけは kamomes_work の橋渡し関数へ委譲します。
+    1month だけは kamomes_work へ
 
-    こうしておくと、
-    - root 側の ticker_master に依存しない
-    - 既存の day/week/year には触らない
-    - kamomes 側の保存物とロジックだけで完結できる
-    という形にできます。
     """
     kamomes_root = Path(__file__).resolve().parents[1] / "each_workspace" / "kamomes_work"
     if str(kamomes_root) not in sys.path:
@@ -54,8 +49,9 @@ def select_month_model_from_kamomes(company):
 
 def is_business_day(base_date):
     """
-    jpholiday が入っていれば祝日も除外し、
-    ない環境では平日判定だけで落ちずに進めます。
+    yfinance のデータは土日と祝日が抜けているので、
+    予測の際も同様に土日と祝日を抜いて予測する必要があるらしい。
+    要らなければ削除してください。
     """
     if base_date.weekday() >= 5:
         return False
@@ -65,8 +61,8 @@ def is_business_day(base_date):
 
 def select_models(company, pred_range, model_type):
 
-    # 1month は kamomes 側の joblib と補助ロジックを使うので、
-    # root の共通前処理へ入る前に早めに切り分けます。
+    # 1month だけは kamomes_work へ
+    # 消しやすいように先に条件分岐
     if pred_range == "1month":
         return select_month_model_from_kamomes(company)
 
