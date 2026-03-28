@@ -7,14 +7,10 @@ import yfinance as yf
 import polars as pl
 import yaml
 from datetime import timedelta
+import jpholiday
 import sys
-from pathlib import Path  # 大畑追加
+from pathlib import Path
 from namai.src.utils.constant import MODELS, COMPANIES
-
-try:
-    import jpholiday  # 大畑追加 祝日判定のためのライブラリ
-except ImportError:
-    jpholiday = None
 
 # """settings"""
 # company = "NTT"
@@ -45,20 +41,6 @@ def select_month_model_from_kamomes(company):
     from src.core.streamlit_month_bridge import select_streamlit_month
 
     return select_streamlit_month(company=company, history_window=30, forecast_window=30)
-
-
-def is_business_day(base_date):
-    """
-    yfinance のデータは土日と祝日が抜けているので、
-    予測の際も同様に土日と祝日を抜いて予測する必要があるらしい。
-    要らなければ削除してください。
-    """
-    if base_date.weekday() >= 5:
-        return False
-    if jpholiday is None:
-        return True
-    return not jpholiday.is_holiday(base_date)
-
 def select_models(company, pred_range, model_type):
 
     # 1month だけは kamomes_work へ
@@ -118,7 +100,7 @@ def select_models(company, pred_range, model_type):
 
         while len(pred_date) < len(pred_data):
             base_date = base_date + timedelta(days=1)
-            if is_business_day(base_date):
+            if base_date.weekday() < 5 and not jpholiday.is_holiday(base_date):
                 pred_date.append(base_date)
         pred_date = [base_date.strftime("%m/%d") for base_date in pred_date]
     
@@ -144,7 +126,7 @@ def select_models(company, pred_range, model_type):
         for i in range(len(pred_data)):
             date = pred_data["ds"].iloc[i]
             if date > last_date:
-                if is_business_day(date):
+                if date.weekday() < 5 and not jpholiday.is_holiday(date):
                     filtered_dates.append(date)  # 👈 文字列やめる
                     filtered_values.append(pred_data["yhat"].iloc[i])
 
