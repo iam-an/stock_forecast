@@ -9,6 +9,7 @@ import yaml
 from datetime import timedelta
 import jpholiday
 import sys
+from pathlib import Path
 from namai.src.utils.constant import MODELS, COMPANIES
 
 # """settings"""
@@ -27,7 +28,25 @@ def load_model(company, pred_range, model_type):
     assert model is not None, "modelがありません"
     return model
 
+
+def select_month_model_from_kamomes(company):
+    """
+    1month だけは kamomes_work へ
+
+    """
+    kamomes_root = Path(__file__).resolve().parents[1] / "each_workspace" / "kamomes_work"
+    if str(kamomes_root) not in sys.path:
+        sys.path.insert(0, str(kamomes_root))
+
+    from src.core.streamlit_month_bridge import select_streamlit_month
+
+    return select_streamlit_month(company=company, history_window=30, forecast_window=30)
 def select_models(company, pred_range, model_type):
+
+    # 1month だけは kamomes_work へ
+    # 消しやすいように先に条件分岐
+    if pred_range == "1month":
+        return select_month_model_from_kamomes(company)
 
     # 期間決定
     if pred_range == "1day":
@@ -122,4 +141,3 @@ def select_models(company, pred_range, model_type):
 
     return act_date, act_data, pred_date, pred_data
         
-

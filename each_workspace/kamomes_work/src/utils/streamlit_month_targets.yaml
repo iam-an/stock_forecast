@@ -1,0 +1,32 @@
+# Streamlit の selectbox 表示名に合わせた 1month 用ターゲット一覧です。
+# root 側を変えられない前提なので、ここでは表示名をそのまま管理します。
+STOCKS:
+  - DISPLAY_NAME: "NTT"
+    TICKER: "9432.T"
+  - DISPLAY_NAME: "Nvidia"
+    TICKER: "NVDA"
+  - DISPLAY_NAME: "AMD"
+    TICKER: "AMD"
+  - DISPLAY_NAME: "Google"
+    TICKER: "GOOGL"
+  - DISPLAY_NAME: "Amazon"
+    TICKER: "AMZN"
+  - DISPLAY_NAME: "Vodafone"
+    TICKER: "VOD"
+  - DISPLAY_NAME: "ベルーナ"
+    TICKER: "9997.T"
+  - DISPLAY_NAME: "オルカン"
+    TICKER: "ACWI"
+  - DISPLAY_NAME: "S&P500"
+    TICKER: "^GSPC"
+
+FORECAST_DAYS: 30
+HISTORY_PERIOD: "3y"
+INTERVAL: "1d"
+
+# 1month は現行 select_models.py でも Prophet 系のロジックなので、
+# ここもその路線にそろえてあります。
+PROPHET:
+  GROWTH: "linear"
+  CHANGEPOINT_PRIOR_SCALE: 0.25
+  N_CHANGEPOINTS: 40

@@ -1,0 +1,36 @@
+# ここはまず無難な銘柄を入れてあります。
+# 実運用では好きな銘柄に差し替えてください。
+COMPANY:
+  - "NVDA"
+  - "AAPL"
+
+# yfinance に渡す期間です。
+# END_DAY を null にすると「今日まで」を取りにいきます。
+START_DAY: "2021-01-01"
+END_DAY: null
+
+# 今回は kotani の 1 日先より少し長く、
+# namai の長期予測よりはずっと短い「中期寄り」を狙っています。
+INPUT_WINDOW: 30
+OUT_WINDOW: 7
+TEST_SIZE: 0.2
+
+# 予測対象は High を使います。
+TARGET_COLUMN: "High"
+
+# STL を使うと、緩やかな流れと細かい振れを分けて見やすくできます。
+USE_STL: true
+STL_PERIOD: 20
+
+# 学習器の設定です。
+# トレンド側は素直な Ridge、揺れ側は少し表現力のある RandomForest にしています。
+TREND_MODEL:
+  ALPHA: 4.0
+
+SWING_MODEL:
+  N_ESTIMATORS: 220
+  MAX_DEPTH: 8
+  MIN_SAMPLES_LEAF: 2
+
+RANDOM_STATE: 42
+PLOT_HISTORY_DAYS: 60
